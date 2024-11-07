@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALM Website - Video Upload</title>
+</head>
+<body>
+  <h1>ALM Website</h1>
+  <p id="status">Waiting for video submission...</p>
+  <button id="videoUploadButton">Upload Video</button>
+
+  <script> 
+    // ALM SECURE TOKEN
+    const MESSAGE_TOKEN = "secureToken123"; 
+
+    // Opening new tab for video recording app
+    document.getElementById("videoUploadButton").addEventListener("click", () => {
+      const newTab = window.open("http://localhost:3000", "_blank"); 
+      if (!newTab) {
+        alert("Please allow pop-ups to open the video recording app.");
+      }
+    });
+
+    // Listen for messages from the video recorder app
+    window.addEventListener("message", (event) => {   
+      if (event.origin === "http://localhost:3000") {
+        const { status, token } = event.data; 
+        if (status === "submitted" && token === MESSAGE_TOKEN) {
+          document.getElementById("status").innerText = "Video Submitted Successfully!"; 
+        } else {
+          console.warn("Unauthorized message or incorrect token received");
+        }
+      } else {
+        console.warn("Untrusted message origin detected");
+      }
+    });
+  </script>
+</body>
+</html>
